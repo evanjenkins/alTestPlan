@@ -21,7 +21,7 @@ SystemPackage.register(function(app, auth, database, circles) {
 
   SystemPackage.aggregateAsset('css', 'common.css');
   SystemPackage.angularDependencies(['mean-factory-interceptor']);
-  
+
 
   // The middleware in config/express will run before this code
 
@@ -44,7 +44,7 @@ SystemPackage.register(function(app, auth, database, circles) {
     roles: ['authenticated'],
     menu: 'account'
   });
-  
+
 
   return SystemPackage;
 

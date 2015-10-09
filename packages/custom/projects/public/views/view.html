@@ -1,0 +1,25 @@
+<section data-ng-controller="ProjectsController" data-ng-init="findOne()">
+  <span>{{project.created | date:'medium'}}</span> /
+  <span>{{project.user.name}}</span>
+  <h2>{{project.title}}</h2>
+  <a class="btn btn-default" href="#" role="button" ng-click="addTestPlan()">Create Test Plan</a>
+  <div data-ng-if="hasAuthorization(project)">
+    <a class="btn" href="/projects/{{project._id}}/edit">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a class="btn" data-ng-click="remove(project);">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+    <hr />
+    <h1>Past test plans</h1>
+    <div ng-repeat="testplan in project.testplans">
+      <h3>{{ testplan.title }}</h3>
+      <a class="btn" href="/testplans/{{testplan._id}}/edit">
+        <i class="glyphicon glyphicon-edit"></i>
+      </a>
+      <!-- <a class="btn" data-ng-click="remove(project);">
+        <i class="glyphicon glyphicon-trash"></i>
+      </a> -->
+    </div>
+  </div>
+</section>

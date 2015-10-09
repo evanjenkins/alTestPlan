@@ -1,0 +1,104 @@
+<section data-ng-controller="ProjectsController">
+  <form name="projectForm" class="form-horizontal col-md-6" role="form" data-ng-submit="create(projectForm.$valid)" novalidate>
+    <div class="form-group" ng-class="{ 'has-error' : submitted && projectForm.title.$invalid }">
+      <label mean-token="'create-title'" class="col-md-3 control-label">Title</label>
+      <div class="col-md-9">
+        <input name="title" type="text" class="form-control" data-ng-model="project.title" id="title" placeholder="Title" required>
+        <div ng-show="submitted && projectForm.title.$invalid" class="help-block">
+          <p ng-show="projectForm.title.$error.required">Title is required</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="form-group">
+      <label mean-token="'permissions'" for="permissions" class="col-md-3 control-label">Permissions</label>
+      <div class="col-md-9">
+         <ui-select multiple ng-model="project.permissions" append-to-body="'true'" on-select="selectPermission()">
+            <ui-select-match placeholder="Select permissions..." ng-click="showDescendants();">{{$item}}</ui-select-match>
+            <ui-select-choices repeat="circle in availableCircles | filter:$select.search" name="permissions">
+              {{circle}}
+            </ui-select-choices>
+          </ui-select>
+      </div>
+    </div>
+
+     <div class="form-group" ng-show="descendants.length">
+        <label mean-token="'descendants'" for="descendants" class="col-md-3 control-label">Descendants</label>
+        <div class="col-md-9">
+          <span ng-repeat="descendant in descendants">{{descendant}} <span ng-hide="$last">, </span></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-md-offset-3 col-md-9">
+        <button mean-token="'create-submit'" type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="form-group" ng-if="project.sections">
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#detailed" aria-controls="detailed" role="tab" data-toggle="tab">Detailed Plan</a>
+      </li>
+      <li role="presentation">
+        <a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary Plan</a>
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" ng-if="project.sections">
+      <div role="tabpanel" class="tab-pane active" id="detailed">
+        <div data-ng-repeat="section in project.sections">
+          <h3><a href="#" editable-text="section.name">{{ section.name || "Section (edit)"}}</a></h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Path</th>
+                <th>Steps to follow</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="row in section.rows">
+                <td>
+                  <span editable-text="row.page" e-name="page" e-form="rowform" e-required>{{ row.page || "Enter page"}}</span>
+                </td>
+                <td>
+                  <span editable-text="row.path" e-name="path" e-form="rowform" e-required>{{ row.path || "Enter path"}}</span>
+                </td>
+                <td>
+                  <span editable-textarea="row.steps" e-name="steps" e-form="rowform" e-required>{{ row.steps || "Enter steps"}}</span>
+                </td>
+                <!-- form -->
+                <td style="white-space:nowrap">
+                  <form editable-form name="rowform" onbeforesave="saveRow($data, row)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == row">
+                    <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                      save
+                    </button>
+                    <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                      cancel
+                    </button>
+                  </form>
+                  <div class="buttons" ng-show="!rowform.$visible">
+                    <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+                    <button class="btn btn-danger" ng-click="removeRow($index)">del</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="btn btn-default" href="#" role="button" ng-click="addRow($index)">Add Row</a>
+        </div>
+        <a class="btn btn-default" href="#" role="button" ng-click="addSection()">Add Section</a>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="summary">
+        <table>
+          <tr>
+            <th>Summary</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

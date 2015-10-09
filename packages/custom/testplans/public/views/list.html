@@ -1,0 +1,21 @@
+<section data-ng-controller="TestplansController" data-ng-init="find()">
+  <ul class="testplans unstyled">
+    <li data-ng-repeat="testplan in testplans">
+      <span>{{testplan.created | date:'medium'}}</span> /
+      <span>{{testplan.user.name}}</span>
+      <h2>
+        <a data-ng-href="/testplans/{{testplan._id}}">{{testplan.title}}</a>
+        <span data-ng-if="hasAuthorization(testplan)">
+          <a class="btn" href="/testplans/{{testplan._id}}/edit">
+            <i class="glyphicon glyphicon-edit"></i>
+          </a>
+          <a class="btn" data-ng-click="remove(testplan);">
+            <i class="glyphicon glyphicon-trash"></i>
+          </a>
+        </span>
+      </h2>
+      <div>{{testplan.content}}</div>
+    </li>
+  </ul>
+  <h1 data-ng-hide="!testplans || testplans.length">No testplans yet. <br> Why don't you <a href="/testplans/create">Create One</a>?</h1>
+</section>

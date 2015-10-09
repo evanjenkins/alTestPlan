@@ -1,0 +1,21 @@
+<section data-ng-controller="ProjectsController" data-ng-init="find()">
+  <ul class="projects unstyled">
+    <li data-ng-repeat="project in projects">
+      <span>{{project.created | date:'medium'}}</span> /
+      <span>{{project.user.name}}</span>
+      <h2>
+        <a data-ng-href="/projects/{{project._id}}">{{project.title}}</a>
+        <span data-ng-if="hasAuthorization(project)">
+          <a class="btn" href="/projects/{{project._id}}/edit">
+            <i class="glyphicon glyphicon-edit"></i>
+          </a>
+          <a class="btn" data-ng-click="remove(project);">
+            <i class="glyphicon glyphicon-trash"></i>
+          </a>
+        </span>
+      </h2>
+      <div>{{project.content}}</div>
+    </li>
+  </ul>
+  <h1 data-ng-hide="!projects || projects.length">No projects yet. <br> Why don't you <a href="/projects/create">Create One</a>?</h1>
+</section>

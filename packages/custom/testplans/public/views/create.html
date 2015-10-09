@@ -1,0 +1,114 @@
+<section data-ng-controller="TestplansController" data-ng-init="getProject()">
+  <h1>New test plan for {{ testplan.project.title }}</h1>
+  <form name="testplanForm" class="form-horizontal col-md-6" role="form" data-ng-submit="update(testplanForm.$valid)" novalidate>
+    <div class="form-group">
+      <label mean-token="'permissions'" for="permissions" class="col-md-2 control-label">Permissions</label>
+      <div class="col-md-10">
+         <ui-select multiple ng-model="testplan.permissions" on-select="selectPermission()">
+            <ui-select-match placeholder="Select permissions..." ng-click="showDescendants();">{{$item}}</ui-select-match>
+            <ui-select-choices repeat="circle in availableCircles | filter:$select.search">
+              {{circle}}
+            </ui-select-choices>
+          </ui-select>
+      </div>
+    </div>
+    <div class="form-group" ng-show="descendants.length">
+        <label mean-token="'descendants'" for="descendants" class="col-md-2 control-label">Descendants</label>
+        <div class="col-md-10">
+          <span ng-repeat="descendant in descendants">{{descendant}} <span ng-hide="$last">, </span></span>
+        </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10">
+        <button mean-token="'edit-submit'" type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="form-group">
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#detailed" aria-controls="detailed" role="tab" data-toggle="tab">Detailed Plan</a>
+      </li>
+      <li role="presentation">
+        <a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary Plan</a>
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="detailed">
+        <div data-ng-repeat="section in testplan.project.sections">
+          <h3>{{ section.name }}</h3>
+          <form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th rowspan="5">Status</th>
+                  <th rowspan="5">Page</th>
+                  <th rowspan="5">Path</th>
+                  <th rowspan="5">Steps to follow</th>
+                  <th rowspan="5">User</th>
+                  <th rowspan="5">Device</th>
+                  <th colspan="5">Browsers</th>
+                </tr>
+                <tr>
+                  <th>Chrome</th>
+                  <th>IE</th>
+                  <th>Firefox</th>
+                  <th>Safari</th>
+                  <th>Edge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="row in section.rows" style="background-color: {{rowStatus[row.status - 1].color}};">
+                  <td>
+                    <span editable-select="row.status" e-name="status" e-form="tableform" e-ng-options="s.value as s.text for s in rowStatus">{{ showRowStatus(row) }}</span>
+                  </td>
+                  <td>
+                    <span editable-text="row.page" e-name="page" e-form="tableform" e-required>{{ row.page || "Enter page"}}</span>
+                  </td>
+                  <td>
+                    <span editable-text="row.path" e-name="path" e-form="tableform" e-required>{{ row.path || "Enter path"}}</span>
+                  </td>
+                  <td>
+                    <span editable-textarea="row.steps" e-name="steps" e-form="tableform" e-required>{{ row.steps || "Enter steps"}}</span>
+                  </td>
+                  <td>
+                    <span editable-select="row.user" e-name="user" e-form="tableform" e-ng-options="s.value as s.text for s in userVals">{{ showUserStatus(row) }}</span>
+                  </td>
+                  <td>
+                    <span editable-select="row.device" e-name="device" e-form="tableform" e-ng-options="s.value as s.text for s in deviceList">{{ showDeviceStatus(row) }}</span>
+                  </td>
+                  <td ng-repeat="(key, browser) in row.browsers">
+                    <span editable-select="row.browsers[key]" e-name="browser" e-form="tableform" e-ng-options="s.value as s.text for s in rowStatus">{{ showBrowserStatus(row, key) }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- buttons -->
+            <div class="btn btn-edit">
+              <button type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="tableform.$show()">
+                edit
+              </button>
+            </div>
+            <div class="btn btn-form" ng-show="tableform.$visible">
+              <button type="button" ng-disabled="tableform.$waiting" ng-click="addRow($index)" class="btn btn-default pull-right">add row</button>
+              <button type="submit" ng-disabled="tableform.$waiting" class="btn btn-primary">save</button>
+              <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="btn btn-default">cancel</button>
+            </div>
+          </form>
+        </div>
+        <a class="btn btn-default" href="#" role="button" ng-click="addSection()">Add Section</a>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="summary">
+        <table>
+          <tr>
+            <th>Summary</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
